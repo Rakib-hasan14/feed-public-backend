@@ -28,6 +28,9 @@ app.use(async (req, res, next) => {
     }
 });
 
+// Health Check Route
+app.get('/api/ping', (req, res) => res.status(200).json({ status: 'ok', server: 'vercel' }));
+
 // Setup API Routes
 app.use('/api', rootRouter);
 
