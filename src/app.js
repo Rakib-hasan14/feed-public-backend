@@ -17,8 +17,16 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Setup Database Connections
-connectDB();
+// Serverless DB Connection Middleware
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (error) {
+        console.error("DB Connection Failure:", error);
+        res.status(500).json({ message: "Database connection failed", error: error.message });
+    }
+});
 
 // Setup API Routes
 app.use('/api', rootRouter);

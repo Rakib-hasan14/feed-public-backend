@@ -38,15 +38,19 @@ Comment.belongsTo(Comment, { as: 'parent', foreignKey: 'parentId' });
 User.hasMany(Like, { foreignKey: 'userId', onDelete: 'CASCADE' });
 Like.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
+let isConnected = false;
 const connectDB = async () => {
+    if (isConnected) return;
     try {
         await sequelize.authenticate();
         console.log('PostgreSQL Connection has been established successfully.');
-        // Sync models
+        // Sync models (Slow in serverless, but safe for initial launch)
         await sequelize.sync({ alter: true });
         console.log('All models were synchronized successfully.');
+        isConnected = true;
     } catch (error) {
         console.error('Unable to connect to the database:', error);
+        throw error;
     }
 };
 
