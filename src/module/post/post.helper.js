@@ -1,7 +1,8 @@
 const { Post, User, Comment, Like } = require('../../entities');
 const { Op } = require('sequelize');
 
-const findPostsForFeed = async (currentUserId) => {
+const findPostsForFeed = async (currentUserId, limit = 4, page = 1) => {
+    const offset = (page - 1) * limit;
     return await Post.findAll({
         where: {
             [Op.or]: [
@@ -10,6 +11,8 @@ const findPostsForFeed = async (currentUserId) => {
             ]
         },
         order: [['createdAt', 'DESC']],
+        limit,
+        offset,
         include: [
             {
                 model: User,

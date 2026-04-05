@@ -9,6 +9,10 @@ module.exports = (sequelize) => {
         entityId: {
             type: DataTypes.INTEGER,
             allowNull: false,
+        },
+        userId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
         }
     }, {
         tableName: 'likes',
@@ -17,7 +21,7 @@ module.exports = (sequelize) => {
         indexes: [
             {
                 unique: true,
-                fields: ['UserId', 'entityType', 'entityId']
+                fields: ['userId', 'entityType', 'entityId']
             }
         ]
     });
