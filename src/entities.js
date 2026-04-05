@@ -8,6 +8,19 @@ const sequelize = new Sequelize(
   {
     dialect: 'postgres',
     logging: false,
+    dialectOptions: (process.env.DATABASE_URL && process.env.DATABASE_URL.includes('localhost')) ? {} : {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    },
+    // Serverless optimization: small pool, fast timeout
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000
+    }
   }
 );
 
