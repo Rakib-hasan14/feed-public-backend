@@ -7,6 +7,9 @@ const { connectDB } = require('./entities');
 
 const app = express();
 
+// Disable TLS verification for development
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 // Middlewares
 app.use(cors());
 app.use(helmet());
