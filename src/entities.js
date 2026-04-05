@@ -1,4 +1,5 @@
 const { Sequelize } = require('sequelize');
+const pg = require('pg'); // Force inclusion for Vercel bundler
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -8,10 +9,10 @@ const sequelize = new Sequelize(
   {
     dialect: 'postgres',
     logging: false,
-    dialectOptions: (process.env.DATABASE_URL && process.env.DATABASE_URL.includes('localhost')) ? {} : {
+    dialectOptions: (process.env.DATABASE_URL && String(process.env.DATABASE_URL).includes('localhost')) ? {} : {
       ssl: {
         require: true,
-        rejectUnauthorized: false,
+        rejectUnauthorized: false, // Critical for Neon/AWS/Azure PostgreSQL
       },
     },
     // Serverless optimization: small pool, fast timeout
@@ -55,14 +56,20 @@ let isConnected = false;
 const connectDB = async () => {
     if (isConnected) return;
     try {
+        console.log('--- DB Handshake Start ---');
         await sequelize.authenticate();
-        console.log('PostgreSQL Connection has been established successfully.');
-        // Sync models (Slow in serverless, but safe for initial launch)
-        await sequelize.sync({ alter: true });
-        console.log('All models were synchronized successfully.');
+        console.log('--- DB Handshake Success ---');
+        
+        // Sync models: ONLY do this locally. NEVER do this on every Vercel request.
+        if (process.env.DATABASE_URL && String(process.env.DATABASE_URL).includes('localhost')) {
+            console.log('--- Local Sync Started ---');
+            await sequelize.sync({ alter: true });
+            console.log('--- Local Sync Success ---');
+        }
+        
         isConnected = true;
     } catch (error) {
-        console.error('Unable to connect to the database:', error);
+        console.error('--- DB Crash ---', error.message);
         throw error;
     }
 };
