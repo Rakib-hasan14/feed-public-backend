@@ -17,5 +17,12 @@ module.exports = (sequelize) => {
     }, {
         tableName: 'posts',
         timestamps: true,
+        indexes: [
+            { fields: ['userId'] },
+            { fields: ['privacy'] },
+            { fields: ['createdAt'] },
+            // Optimized index for feed retrieval: privacy + descending order
+            { fields: ['privacy', 'createdAt'] }
+        ]
     });
 };

@@ -22,6 +22,10 @@ module.exports = (sequelize) => {
             {
                 unique: true,
                 fields: ['userId', 'entityType', 'entityId']
+            },
+            // Optimize lookup of likes for a specific entity
+            {
+                fields: ['entityId', 'entityType']
             }
         ]
     });

@@ -9,5 +9,11 @@ module.exports = (sequelize) => {
     }, {
         tableName: 'comments',
         timestamps: true,
+        indexes: [
+            { fields: ['postId'] },
+            { fields: ['userId'] },
+            { fields: ['parentId'] },
+            { fields: ['createdAt'] }
+        ]
     });
 };

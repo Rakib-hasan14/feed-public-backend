@@ -22,5 +22,10 @@ module.exports = (sequelize) => {
     }, {
         tableName: 'users',
         timestamps: true,
+        indexes: [
+            { fields: ['email'] },
+            { fields: ['first_name'] },
+            { fields: ['last_name'] }
+        ]
     });
 };
